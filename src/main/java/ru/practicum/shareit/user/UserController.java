@@ -35,6 +35,7 @@ public class UserController {
     public User patchUser(@PathVariable long userId, @RequestBody User user) {
         return userService.patchUser(userId, user);
     }
+
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
