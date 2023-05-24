@@ -34,7 +34,7 @@ public class ErrorHandler {
     @ExceptionHandler({UserValidateException.class, ItemValidateException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleValidateData(RuntimeException e) {
-        log.info(e.getMessage());
+        log.warn(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

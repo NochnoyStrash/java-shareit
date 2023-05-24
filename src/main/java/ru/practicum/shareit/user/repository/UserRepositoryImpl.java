@@ -16,7 +16,7 @@ public class UserRepositoryImpl implements  UserRepository {
     @Override
     public User getUser(long userId) {
         if (!userMap.containsKey(userId)) {
-            throw new UserNotFoundException("Пользователь с таким id = " + userId + " не найден!");
+            throw new UserNotFoundException(String.format("Пользователь с таким id = %d не найден!", userId));
         }
         return userMap.get(userId);
     }
@@ -24,7 +24,7 @@ public class UserRepositoryImpl implements  UserRepository {
     @Override
     public User addUser(User user) {
         if (emails.contains(user.getEmail())) {
-            throw new UserValidateException("Пользователь с таким Email уже существует");
+            throw new UserValidateException(String.format("Пользователь с таким Email = %s уже существует", user.getEmail()));
         }
         user.setId(indetificate++);
         emails.add(user.getEmail());
@@ -35,12 +35,12 @@ public class UserRepositoryImpl implements  UserRepository {
     @Override
     public User patchUser(User user, long userId) {
         if (!userMap.containsKey(userId)) {
-            throw new UserNotFoundException("Пользователь с таким id = " + userId + " не найден!");
+            throw new UserNotFoundException(String.format("Пользователь с таким id = %d не найден!", userId));
         }
         User user1 = getUser(userId);
         if (emails.contains(user.getEmail())) {
             if (!Objects.equals(user1.getEmail(), user.getEmail())) {
-                throw new UserValidateException("Пользователь с таким Email уже существует");
+                throw new UserValidateException(String.format("Пользователь с таким Email = %s уже существует", user.getEmail()));
             }
         }
 
@@ -58,7 +58,7 @@ public class UserRepositoryImpl implements  UserRepository {
     @Override
     public void deleteUser(long userId) {
         if (!userMap.containsKey(userId)) {
-            throw new UserNotFoundException("Пользователь с таким id = " + userId + " не найден!");
+            throw new UserNotFoundException(String.format("Пользователь с таким id = %d не найден!", userId));
         }
         emails.remove(userMap.get(userId).getEmail());
         userMap.remove(userId);

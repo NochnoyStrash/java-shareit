@@ -29,11 +29,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item updateItem(ItemDto itemDto, long userId, long itemId) {
         if (itemDto.getId() != 0 && itemDto.getId() != itemId) {
-            throw new ItemNotFoundException("Не найдена вещь с таким ID = " + itemId);
+            throw new ItemNotFoundException(String.format("Не найдена вещь с таким ID = %d", itemId));
         }
         Item item2 = itemRepository.findItemByUserId(userId).stream()
-                .filter(item1 -> item1.getId() == itemId).findFirst().orElseThrow(() -> new UserNotFoundException("У пользователя с ID = " + userId
-                 + " нет вещей с ID = " + itemId));
+                .filter(item1 -> item1.getId() == itemId).findFirst()
+                .orElseThrow(() -> new UserNotFoundException(String.format("У пользователя с ID = %d  " +
+                        "нет вещей с ID = %d", userId, itemId)));
         if (itemDto.getName() != null) {
             item2.setName(itemDto.getName());
         }

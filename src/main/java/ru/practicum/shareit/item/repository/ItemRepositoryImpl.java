@@ -5,38 +5,36 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
-    private Map<Long, List<Long>> itemsIdFromUser = new HashMap<>();
-    private Map<Long, Item> itemMap = new HashMap<>();
-    private final UserRepository userRepository;
+    private final Map<Long, List<Long>> itemsIdFromUser = new HashMap<>();
+    private final Map<Long, Item> itemMap = new HashMap<>();
+    private final UserService userService;
 
     @Autowired
-    public ItemRepositoryImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public ItemRepositoryImpl(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     public List<Item> findItemByUserId(long userId) {
         if (!itemsIdFromUser.containsKey(userId)) {
-            throw new UserNotFoundException("у пользователя с ID = " + userId + " нет вещей");
+            throw new UserNotFoundException(String.format("У пользователя с ID = %d нет вещей", userId));
         }
-        userRepository.getUser(userId);
+        userService.getUser(userId);
         List<Item> itemList = new ArrayList<>();
-        for (Long id : itemsIdFromUser.get(userId)) {
-            itemList.add(itemMap.get(id));
-        }
+        itemsIdFromUser.get(userId).forEach(i -> itemList.add(itemMap.get(i)));
         return itemList;
     }
 
     @Override
     public Item save(long userId, Item item) {
-        userRepository.getUser(userId);
+        userService.getUser(userId);
         itemMap.put(item.getId(), item);
         itemsIdFromUser.compute(userId, (usersId, userItemsId) -> {
             if (userItemsId == null) {
@@ -51,7 +49,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item getItem(long userId, long itemId) {
         if (!itemMap.containsKey(itemId)) {
-            throw new ItemNotFoundException("Отсутсвует вещь с ID = " + itemId);
+            throw new ItemNotFoundException(String.format("Отсутсвует вещь с ID = %d", itemId));
         }
         return itemMap.get(itemId);
     }
@@ -72,9 +70,13 @@ public class ItemRepositoryImpl implements ItemRepository {
             return itemList;
         }
         final String text1 = text.toLowerCase();
-        return itemMap.values().stream().filter(item -> (item.getName().toLowerCase().contains(text1)
-                || item.getDescription().toLowerCase().contains(text1))
-                && item.isAvailable()).sorted(Comparator.comparingInt(o -> (int) o.getId())).collect(Collectors.toList());
+        return itemMap.values().stream().filter(item -> isContain(item, text1))
+                .sorted(Comparator.comparingInt(o -> (int) o.getId())).collect(Collectors.toList());
+    }
+
+    private boolean isContain(Item item, String text) {
+        return (item.getName().toLowerCase().contains(text) || item.getDescription().toLowerCase().contains(text))
+                && item.isAvailable();
     }
 
 }
