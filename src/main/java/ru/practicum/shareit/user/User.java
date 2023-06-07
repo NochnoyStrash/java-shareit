@@ -12,7 +12,9 @@ import javax.validation.constraints.NotNull;
  * TODO Sprint add-controllers.
  */
 @Entity
-@Getter @Setter  @ToString
+@Getter
+@Setter
+@ToString
 @Table(name = "users")
 public class User {
     @Id

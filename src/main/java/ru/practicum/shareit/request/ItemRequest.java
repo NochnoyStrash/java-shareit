@@ -8,7 +8,9 @@ import javax.persistence.*;
  * TODO Sprint add-item-requests.
  */
 @Entity
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "request")
