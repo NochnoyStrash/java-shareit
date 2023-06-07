@@ -71,7 +71,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         }
         final String text1 = text.toLowerCase();
         return itemMap.values().stream().filter(item -> isContain(item, text1))
-                .sorted(Comparator.comparingInt(o -> (int) o.getId())).collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(o -> Integer.valueOf(Math.toIntExact(o.getId())))).collect(Collectors.toList());
     }
 
     private boolean isContain(Item item, String text) {

@@ -2,7 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comments.Comment;
+import ru.practicum.shareit.item.comments.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoLastAndNextBooking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -20,8 +23,8 @@ public class ItemController {
     private static final String userIdHeaders = "X-Sharer-User-Id";
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@RequestHeader(userIdHeaders) long userId, @PathVariable long itemId) {
-        return itemService.getItemDto(itemId, userId);
+    public ItemDtoLastAndNextBooking getItem(@RequestHeader(userIdHeaders) long userId, @PathVariable long itemId) {
+        return itemService.getItemLastNext(itemId, userId);
     }
 
     @PostMapping
@@ -35,12 +38,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getItemMaster(@RequestHeader(userIdHeaders) long userId) {
-        return itemService.getMasterItemsDto(userId);
+    public List<ItemDtoLastAndNextBooking> getItemMaster(@RequestHeader(userIdHeaders) long userId) {
+        return itemService.findItemWithBookingLastNext(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItem(@RequestParam String text) {
         return itemService.findItemFromText(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(userIdHeaders) long userId,
+                                       @PathVariable long itemId, @RequestBody @Valid CommentDto commentDto) {
+        Comment comment = itemService.addComment(itemId, userId, commentDto);
+        return itemService.getComment(comment);
+
     }
 }

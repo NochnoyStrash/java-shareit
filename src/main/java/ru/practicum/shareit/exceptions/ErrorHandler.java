@@ -7,6 +7,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.booking.exception.BookingNotFoundException;
+import ru.practicum.shareit.booking.exception.ValidateBookingAndItemxception;
+import ru.practicum.shareit.booking.exception.ValidateBookingException;
+import ru.practicum.shareit.item.exception.CommentsValidateException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemValidateException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -18,7 +22,8 @@ import javax.validation.ConstraintViolationException;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class})
+    @ExceptionHandler({ UserNotFoundException.class, ItemNotFoundException.class,
+            BookingNotFoundException.class, ValidateBookingAndItemxception.class })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectNotFound(RuntimeException e) {
         return  new ErrorResponse(e.getMessage());
@@ -31,10 +36,24 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler({ValidateBookingException.class, CommentsValidateException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectUserData(RuntimeException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
     @ExceptionHandler({UserValidateException.class, ItemValidateException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleValidateData(RuntimeException e) {
         log.warn(e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleExceptions(Throwable e) {
+        log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

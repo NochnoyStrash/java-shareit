@@ -1,33 +1,52 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.user.User;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 
 /**
  * TODO Sprint add-controllers.
  */
-@Data
+@Entity
+@Table(name = "items")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
-    @EqualsAndHashCode.Include
-    @PositiveOrZero
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotNull
     @NotBlank
     private String name;
     @NotNull
     @NotBlank
     private String description;
-    private long userId;
-    private boolean available = true;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+    @Column(name = "is_available")
+    private boolean available;
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    @Transient
+    private ItemRequest request;
 
-    public Item(String name, String description, long userId, boolean available) {
-        this.name = name;
-        this.description = description;
-        this.userId = userId;
-        this.available = available;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Item)) return false;
+        return id != null && id.equals(((Item) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
