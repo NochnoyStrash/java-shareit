@@ -61,7 +61,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.booker as booker " +
             "join fetch b.item as i " +
             "where b.booker.id = ?1 " +
-            "and b.status = 'WAITING' "+
+            "and b.status = 'WAITING' " +
             "order by b.start desc ")
     List<Booking> findAllByUserWaiting(Long user);
 
@@ -70,7 +70,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.booker as booker " +
             "join fetch b.item as i " +
             "where b.booker.id = ?1 " +
-            "and b.status = 'REJECTED' "+
+            "and b.status = 'REJECTED' " +
             "order by b.start desc ")
     List<Booking> findAllByUserRejected(Long user);
 
