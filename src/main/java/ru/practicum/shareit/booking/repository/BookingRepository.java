@@ -11,32 +11,67 @@ import java.util.Optional;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    @Query(value = "select * from bookings b left join items it on b.item_id = it.id" +
-            " where b.id = ?1 and (b.booker_id = ?2 or it.owner_id = ?2)", nativeQuery = true)
+    @Query("select b " +
+            "from Booking as b " +
+            "join fetch b.booker as booker " +
+            "join fetch b.item as i " +
+            "where b.id = ?1 " +
+            "and (booker.id = ?2 OR i.owner.id = ?2)")
     Optional<Booking> findBookingForAuthor(Long bookingId, Long userId);
 
-    @Query(value = "select * from bookings b where b.booker_id = ?1  order by b.start_date desc", nativeQuery = true)
+    @Query("select b " +
+            "from Booking as b " +
+            "join fetch b.booker as booker " +
+            "join fetch b.item as i " +
+            "where b.booker.id = ?1 " +
+            "order by b.start desc ")
     List<Booking> findAllByUser(Long user);
 
-    @Query(value = "select * from bookings b  where b.booker_id  = ?1 " +
-            "and b.start_date  < now() " +
-            "and b.end_date  > now()  order by b.start_date  desc;", nativeQuery = true)
+    @Query("select b " +
+            "from Booking as b " +
+            "join fetch b.booker as booker " +
+            "join fetch b.item as i " +
+            "where b.booker.id = ?1 " +
+            "and b.start < current_timestamp " +
+            "and b.end > current_timestamp " +
+            "order by b.start desc ")
     List<Booking> findAllByUserCurrent(Long user);
 
-    @Query(value = "select * from bookings b  where b.booker_id  = ?1  " +
-            "and b.status like 'APPROVED' and b.end_date  < now() order by b.start_date  desc;", nativeQuery = true)
+    @Query("select b " +
+            "from Booking as b " +
+            "join fetch b.booker as booker " +
+            "join fetch b.item as i " +
+            "where b.booker.id = ?1 " +
+            "and b.status = 'APPROVED' " +
+            "and b.end < current_timestamp " +
+            "order by b.start desc ")
     List<Booking> findAllByUserPost(Long user);
 
-    @Query(value = "select * from bookings b  where b.booker_id  = ?1  " +
-            "and b.start_date  > now() order by b.start_date  desc;", nativeQuery = true)
+    @Query("select b " +
+            "from Booking as b " +
+            "join fetch b.booker as booker " +
+            "join fetch b.item as i " +
+            "where b.booker.id = ?1 " +
+            "and b.start > current_timestamp " +
+            "order by b.start desc ")
     List<Booking> findAllByUserFuture(Long user);
 
-    @Query(value = "select * from bookings b  where b.booker_id  = ?1  " +
-            "and b.status like 'WAITING' order by b.start_date desc;", nativeQuery = true)
+    @Query("select b " +
+            "from Booking as b " +
+            "join fetch b.booker as booker " +
+            "join fetch b.item as i " +
+            "where b.booker.id = ?1 " +
+            "and b.status = 'WAITING' "+
+            "order by b.start desc ")
     List<Booking> findAllByUserWaiting(Long user);
 
-    @Query(value = "select * from bookings b  where b.booker_id  = ?1  " +
-            "and b.status like 'REJECTED' order by b.start_date desc;", nativeQuery = true)
+    @Query("select b " +
+            "from Booking as b " +
+            "join fetch b.booker as booker " +
+            "join fetch b.item as i " +
+            "where b.booker.id = ?1 " +
+            "and b.status = 'REJECTED' "+
+            "order by b.start desc ")
     List<Booking> findAllByUserRejected(Long user);
 
     @Query("select b " +

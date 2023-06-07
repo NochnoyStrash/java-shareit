@@ -12,7 +12,9 @@ import java.util.Set;
 public interface ItemsRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByOwnerId(Long ownerId);
 
-    @Query(value = "select * from Items i where i.name ilike %?1% or i.description ilike %?1% and i.is_available = true ", nativeQuery = true)
-    Set<Item> findItemsByText(String text);
+//    @Query(value = "select * from Items i where i.name ilike %?1% or i.description ilike %?1% and i.is_available = true ", nativeQuery = true)
+    Set<Item> findByNameContainingIgnoreCase(String text);
+
+    Set<Item> findByDescriptionContainingIgnoreCase(String text);
 
 }

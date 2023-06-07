@@ -121,9 +121,11 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return itemDtos;
         }
-        Set<Item> items = itemsRepository.findItemsByText(text);
-        items.forEach(i -> itemDtos.add(mapToDto(i)));
-       return itemDtos;
+        Set<Item> itemName = itemsRepository.findByNameContainingIgnoreCase(text);
+        Set<Item> itemDescription = itemsRepository.findByDescriptionContainingIgnoreCase(text);
+        itemName.addAll(itemDescription);
+        itemName.forEach(i -> itemDtos.add(mapToDto(i)));
+       return itemDtos.stream().filter(ItemDto::getAvailable).collect(Collectors.toList());
     }
 
     public List<ItemDtoLastAndNextBooking> findItemWithBookingLastNext(Long ownerId) {
