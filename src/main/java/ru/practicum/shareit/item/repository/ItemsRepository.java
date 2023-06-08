@@ -12,7 +12,7 @@ import java.util.Set;
 public interface ItemsRepository extends JpaRepository<Item, Long> {
 
     List<Item> findAllByOwnerId(Long ownerId);
-    
+
     @Query("select i " +
             "from Item as i " +
             "where i.available = true and " +
