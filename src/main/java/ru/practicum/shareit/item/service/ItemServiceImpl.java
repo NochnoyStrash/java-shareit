@@ -101,7 +101,7 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> next = bookingRepository.findNextBookingItem(itemId);
         if (!next.isEmpty()) {
             Booking booking = next.get(0);
-            if (booking.getItem().getOwner().getId().equals(ownerId) && booking.getStatus().equals(StatusBooking.APPROVED)) {
+            if (booking.getItem().getOwner().getId().equals(ownerId) && booking.getStatus() == StatusBooking.APPROVED) {
                 itemDto.setNextBooking(new BookingInfo(booking.getId(), booking.getBooker().getId()));
             }
         }
@@ -121,9 +121,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return itemDtos;
         }
-        Set<Item> itemName = itemsRepository.findByNameContainingIgnoreCase(text);
-        Set<Item> itemDescription = itemsRepository.findByDescriptionContainingIgnoreCase(text);
-        itemName.addAll(itemDescription);
+        Set<Item> itemName = itemsRepository.searchText(text);
         itemName.forEach(i -> itemDtos.add(mapToDto(i)));
        return itemDtos.stream().filter(ItemDto::getAvailable).collect(Collectors.toList());
     }

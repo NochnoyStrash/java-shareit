@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User patchUser(long userId, User user) {
+    public User updateUser(long userId, User user) {
         User user1 = usersRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException(String.format("Пользователь с ID = %d отсутствует", userId)));
         if (user.getName() != null) {

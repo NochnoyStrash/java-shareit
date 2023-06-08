@@ -33,7 +33,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public User patchUser(@PathVariable long userId, @RequestBody User user) {
-        return userService.patchUser(userId, user);
+        return userService.updateUser(userId, user);
     }
 
     @DeleteMapping("/{userId}")

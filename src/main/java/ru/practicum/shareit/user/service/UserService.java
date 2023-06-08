@@ -9,7 +9,7 @@ public interface UserService {
 
     User getUser(long userid);
 
-    User patchUser(long userId, User user);
+    User updateUser(long userId, User user);
 
     void deleteUser(long user);
 

@@ -82,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
         if (!Objects.equals(ownerId2, ownerId)) {
             throw new UserNotFoundException("Подтверидить заказ может только владелец вещи");
         }
-        if (!booking.getStatus().equals(StatusBooking.WAITING)) {
+        if (booking.getStatus() != StatusBooking.WAITING) {
             throw  new ValidateBookingException("Нелья поменять уже подтвержденной вещи");
         }
         if (approved) {
