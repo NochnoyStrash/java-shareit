@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Repository
 public interface ItemsRepository extends JpaRepository<Item, Long> {
+
     List<Item> findAllByOwnerId(Long ownerId);
     
     @Query("select i " +
@@ -18,5 +19,4 @@ public interface ItemsRepository extends JpaRepository<Item, Long> {
             "(lower(i.name) like lower(concat('%', ?1, '%') ) or " +
             "lower(i.description) like lower(concat('%', ?1, '%') ))")
     Set<Item> searchText(String text);
-
 }
