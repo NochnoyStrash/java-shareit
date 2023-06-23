@@ -60,6 +60,7 @@ class RequestRepositoryTest {
         assertEquals(itemRequests2.size(), 2, "количество элементов в списке не равно 2");
         assertNotEquals(itemRequests2.get(0), itemRequest2, "запросы равны");
         assertNotEquals(itemRequests2.get(1), itemRequest2, "запросы равны");
+
     }
 
 
