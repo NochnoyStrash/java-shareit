@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -38,13 +39,17 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoLastAndNextBooking> getItemMaster(@RequestHeader(userIdHeaders) long userId) {
-        return itemService.findItemWithBookingLastNext(userId);
+    public List<ItemDtoLastAndNextBooking> getItemMaster(@RequestHeader(userIdHeaders) long userId,
+                                                         @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                                         @RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
+        return itemService.findItemWithBookingLastNext(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestParam String text) {
-        return itemService.findItemFromText(text);
+    public List<ItemDto> searchItem(@RequestParam String text,
+                                    @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                    @RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
+        return itemService.findItemFromText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

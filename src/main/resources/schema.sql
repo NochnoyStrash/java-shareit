@@ -13,7 +13,9 @@ name varchar(100));
 CREATE TABLE IF NOT EXISTS request (
 id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY key,
 description varchar(500),
+created_date TIMESTAMP WITHOUT TIME zone,
 requestor_id BIGINT references users(id));
+
 
 CREATE TABLE IF NOT EXISTS items (
 id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

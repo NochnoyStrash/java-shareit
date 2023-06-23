@@ -18,6 +18,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +36,6 @@ public class Item {
     private boolean available;
     @ManyToOne
     @JoinColumn(name = "request_id")
-    @Transient
     private ItemRequest request;
 
     @Override

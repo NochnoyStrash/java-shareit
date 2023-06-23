@@ -13,6 +13,7 @@ import ru.practicum.shareit.booking.exception.ValidateBookingException;
 import ru.practicum.shareit.item.exception.CommentsValidateException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemValidateException;
+import ru.practicum.shareit.request.exception.NotFoundRequestException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.exception.UserValidateException;
 
@@ -23,7 +24,7 @@ import javax.validation.ConstraintViolationException;
 public class ErrorHandler {
 
     @ExceptionHandler({ UserNotFoundException.class, ItemNotFoundException.class,
-            BookingNotFoundException.class, ValidateBookingAndItemxception.class })
+            BookingNotFoundException.class, ValidateBookingAndItemxception.class, NotFoundRequestException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectNotFound(RuntimeException e) {
         return  new ErrorResponse(e.getMessage());

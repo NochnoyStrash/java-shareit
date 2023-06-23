@@ -1,8 +1,13 @@
 package ru.practicum.shareit.request;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
+import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-item-requests.
@@ -13,9 +18,19 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "request")
+@Builder
+@Table(name = "request", schema = "public")
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    @NotBlank
+    @Length(max = 500)
+    private String description;
+    @ManyToOne
+    @JoinColumn(name = "requestor_id")
+    private User requestor;
+    @Column(name = "created_date")
+    private LocalDateTime created;
 }

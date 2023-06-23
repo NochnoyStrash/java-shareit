@@ -20,9 +20,9 @@ public interface ItemService {
 
     List<ItemDto> getMasterItemsDto(long userId);
 
-    List<ItemDto> findItemFromText(String text);
+    List<ItemDto> findItemFromText(String text, Integer from, Integer size);
 
-    List<ItemDtoLastAndNextBooking> findItemWithBookingLastNext(Long ownerId);
+    List<ItemDtoLastAndNextBooking> findItemWithBookingLastNext(Long ownerId, Integer from, Integer size);
 
     ItemDtoLastAndNextBooking getItemLastNext(Long itemId, Long ownerId);
 
