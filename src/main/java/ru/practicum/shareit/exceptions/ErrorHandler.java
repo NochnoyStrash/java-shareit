@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.booking.exception.ValidateBookingAndItemxception;
 import ru.practicum.shareit.booking.exception.ValidateBookingException;
+import ru.practicum.shareit.generrat.Generated;
 import ru.practicum.shareit.item.exception.CommentsValidateException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemValidateException;
@@ -21,6 +22,7 @@ import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 @Slf4j
+@Generated
 public class ErrorHandler {
 
     @ExceptionHandler({ UserNotFoundException.class, ItemNotFoundException.class,

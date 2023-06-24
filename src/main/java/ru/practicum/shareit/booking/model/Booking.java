@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.model;
 
 import lombok.*;
 import ru.practicum.shareit.booking.StatusBooking;
+import ru.practicum.shareit.generrat.Generated;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "bookings")
+@Generated
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

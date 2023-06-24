@@ -2,6 +2,7 @@ package ru.practicum.shareit.request.model;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import ru.practicum.shareit.generrat.Generated;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "request", schema = "public")
+@Generated
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

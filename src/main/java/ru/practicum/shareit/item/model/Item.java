@@ -19,6 +19,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Generated
+@ru.practicum.shareit.generrat.Generated
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
