@@ -1,0 +1,292 @@
+package ru.practicum.shareit.booking.service;
+
+import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import ru.practicum.shareit.booking.StatusBooking;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoAuthor;
+import ru.practicum.shareit.booking.dto.BookingDtoCreate;
+import ru.practicum.shareit.booking.exception.BookingNotFoundException;
+import ru.practicum.shareit.booking.exception.ValidateBookingException;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.service.UserService;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+class BookingServiceImplTest {
+    BookingServiceImpl bookingService;
+    @Mock
+    ItemService itemService;
+    @Mock
+    BookingRepository bookingRepository;
+    @Mock
+    UserService userService;
+    EasyRandom random = new EasyRandom();
+
+    @BeforeEach
+    public void beforeEach() {
+        bookingService = new BookingServiceImpl(itemService,bookingRepository,userService);
+    }
+
+    @Test
+    void createBooking() {
+        User user = new User(1L, "Вася", "enot@mail.ru");
+        User user1 = new User(2L, "Aся", "dot@mail.ru");
+        Item item = new Item(1L, "Дрель", "Мощная дрель", user, true, null);
+        BookingDtoCreate bookingDto = BookingDtoCreate.builder()
+                .itemId(1L)
+                .end(LocalDateTime.now().plusDays(2))
+                .start(LocalDateTime.now().plusHours(12))
+                .build();
+        Booking booking = Booking.builder()
+                .id(1L)
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .item(item)
+                .status(StatusBooking.WAITING)
+                .booker(user1)
+                .build();
+
+
+        Mockito
+                .when(itemService.getItem(Mockito.anyLong()))
+                .thenReturn(item);
+
+        Mockito
+                .when(userService.getUser(Mockito.anyLong()))
+                .thenReturn(user1);
+        Mockito
+                .when(bookingRepository.save(Mockito.any(Booking.class)))
+                        .thenReturn(booking);
+        Booking booking1 = bookingService.createBooking(bookingDto, user1.getId());
+        assertEquals(booking1.getItem(), booking.getItem());
+
+        BookingDtoCreate bookingDto1 = BookingDtoCreate.builder()
+                .itemId(1L)
+                .end(LocalDateTime.now().plusDays(2))
+                .start(LocalDateTime.now().minusHours(12))
+                .build();
+        final ValidateBookingException e = assertThrows(ValidateBookingException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                Booking booking2 = bookingService.createBooking(bookingDto1, user1.getId());
+            }
+        });
+        assertEquals("Неправильная дата заказа", e.getMessage());
+
+        final ValidateBookingException ex = assertThrows(ValidateBookingException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                Booking booking3 = bookingService.createBooking(bookingDto1, user1.getId());
+            }
+        });
+        assertEquals("Неправильная дата заказа", ex.getMessage());
+
+    }
+
+    @Test
+    void createBookingDto() {
+        Booking booking = random.nextObject(Booking.class);
+        BookingDto bookingDto = bookingService.createBookingDto(booking);
+        assertEquals(bookingDto.getId(), booking.getId());
+        assertEquals(bookingDto.getItem(), booking.getItem());
+        assertEquals(bookingDto.getBooker(), booking.getBooker());
+        assertEquals(bookingDto.getStart(), booking.getStart());
+
+    }
+
+    @Test
+    void createBookingDtoAuthor() {
+        Booking booking = random.nextObject(Booking.class);
+        BookingDtoAuthor bookingDtoAuthor = bookingService.createBookingDtoAuthor(booking);
+        assertEquals(bookingDtoAuthor.getId(), booking.getId());
+        assertEquals(bookingDtoAuthor.getItem(), booking.getItem());
+        assertEquals(bookingDtoAuthor.getBooker(), booking.getBooker());
+        assertEquals(bookingDtoAuthor.getStart(), booking.getStart());
+        assertEquals(bookingDtoAuthor.getStatus(), booking.getStatus());
+    }
+
+    @Test
+    void createBookingDtoCreate() {
+        Booking booking = random.nextObject(Booking.class);
+        BookingDtoCreate bookingDtoCreate = bookingService.createBookingDtoCreate(booking);
+        assertEquals(bookingDtoCreate.getId(), booking.getId());
+        assertEquals(bookingDtoCreate.getItemId(), booking.getItem().getId());
+        assertEquals(bookingDtoCreate.getStart(), booking.getStart());
+        assertEquals(bookingDtoCreate.getEnd(), booking.getEnd());
+    }
+
+    @Test
+    void findBooking() {
+
+        Mockito
+                .when(bookingRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.empty());
+        final BookingNotFoundException e = assertThrows(BookingNotFoundException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                bookingService.findBooking(1L);
+            }
+        });
+        assertEquals("Такого запроса на бронирования с ID = 1 не надено", e.getMessage());
+    }
+
+    @Test
+    void confirmBooking() {
+        User user = new User(1L, "Вася", "enot@mail.ru");
+        User user1 = new User(2L, "Aся", "dot@mail.ru");
+        Item item = new Item(1L, "Дрель", "Мощная дрель", user, true, null);
+        Booking booking = Booking.builder()
+                .id(1L)
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now().plusDays(1))
+                .item(item)
+                .status(StatusBooking.WAITING)
+                .booker(user1)
+                .build();
+
+        Booking booking1 = Booking.builder()
+                .id(1L)
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now().plusDays(1))
+                .item(item)
+                .status(StatusBooking.APPROVED)
+                .booker(user1)
+                .build();
+
+        Mockito
+                .when(bookingRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(booking));
+        Mockito
+                .when(bookingRepository.save(booking))
+                .thenReturn(booking1);
+
+        BookingDtoAuthor bookingDtoAuthor = bookingService.confirmBooking(1L, 1L, true);
+        assertEquals(bookingDtoAuthor.getId(), booking.getId());
+    }
+
+    @Test
+    void findAllBookingByUser() {
+        Booking allBooking = random.nextObject(Booking.class);
+        Booking currentBooking = random.nextObject(Booking.class);
+        Booking postBooking = random.nextObject(Booking.class);
+        Booking futureBooking = random.nextObject(Booking.class);
+        Booking waitingBooking = random.nextObject(Booking.class);
+        Booking rejectedBooking = random.nextObject(Booking.class);
+        Mockito
+                .when(bookingRepository.findAllByUser(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(allBooking)));
+        Mockito
+                .when(bookingRepository.findAllByUserCurrent(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(currentBooking)));
+        Mockito
+                .when(bookingRepository.findAllByUserPost(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(postBooking)));
+        Mockito
+                .when(bookingRepository.findAllByUserFuture(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(futureBooking)));
+        Mockito
+                .when(bookingRepository.findAllByUserWaiting(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(waitingBooking)));
+        Mockito
+                .when(bookingRepository.findAllByUserRejected(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(rejectedBooking)));
+        Page<Booking> bookings = bookingService.findAllBookingByUser(1L,"ALL", 1, 1);
+        assertEquals(bookings.stream().findFirst().get().getId(), allBooking.getId());
+
+        Page<Booking> bookings1 = bookingService.findAllBookingByUser(1L,"CURRENT", 1, 1);
+        assertEquals(bookings1.stream().findFirst().get().getId(), currentBooking.getId());
+
+        Page<Booking> bookings2 = bookingService.findAllBookingByUser(1L,"PAST", 1, 1);
+        assertEquals(bookings2.stream().findFirst().get().getId(), postBooking.getId());
+
+        Page<Booking> bookings3 = bookingService.findAllBookingByUser(1L,"FUTURE", 1, 1);
+        assertEquals(bookings3.stream().findFirst().get().getId(), futureBooking.getId());
+
+        Page<Booking> bookings4 = bookingService.findAllBookingByUser(1L,"WAITING", 1, 1);
+        assertEquals(bookings4.stream().findFirst().get().getId(), waitingBooking.getId());
+
+        Page<Booking> bookings5 = bookingService.findAllBookingByUser(1L,"REJECTED", 1, 1);
+        assertEquals(bookings5.stream().findFirst().get().getId(), rejectedBooking.getId());
+
+        ValidateBookingException e = assertThrows(ValidateBookingException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                Page<Booking> booki = bookingService.findAllBookingByUser(1L,"SDFG", 1, 1);
+            }
+        });
+        assertEquals("Unknown state: SDFG", e.getMessage());
+    }
+
+    @Test
+    void findAllBookingByOwner() {
+        Booking allBooking = random.nextObject(Booking.class);
+        Booking currentBooking = random.nextObject(Booking.class);
+        Booking postBooking = random.nextObject(Booking.class);
+        Booking futureBooking = random.nextObject(Booking.class);
+        Booking waitingBooking = random.nextObject(Booking.class);
+        Booking rejectedBooking = random.nextObject(Booking.class);
+        Mockito
+                .when(bookingRepository.findAllByOwner(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(allBooking)));
+        Mockito
+                .when(bookingRepository.findAllByOwnerCurrent(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(currentBooking)));
+        Mockito
+                .when(bookingRepository.findAllByOwnerPost(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(postBooking)));
+        Mockito
+                .when(bookingRepository.findAllByOwnerFuture(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(futureBooking)));
+        Mockito
+                .when(bookingRepository.findAllByOwnerWaiting(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(waitingBooking)));
+        Mockito
+                .when(bookingRepository.findAllByOwnerRejected(1L, PageRequest.of(1,1)))
+                .thenReturn(new PageImpl<>(List.of(rejectedBooking)));
+        Page<Booking> bookings = bookingService.findAllBookingByOwner(1L,"ALL", 1, 1);
+        assertEquals(bookings.stream().findFirst().get().getId(), allBooking.getId());
+
+        Page<Booking> bookings1 = bookingService.findAllBookingByOwner(1L,"CURRENT", 1, 1);
+        assertEquals(bookings1.stream().findFirst().get().getId(), currentBooking.getId());
+
+        Page<Booking> bookings2 = bookingService.findAllBookingByOwner(1L,"PAST", 1, 1);
+        assertEquals(bookings2.stream().findFirst().get().getId(), postBooking.getId());
+
+        Page<Booking> bookings3 = bookingService.findAllBookingByOwner(1L,"FUTURE", 1, 1);
+        assertEquals(bookings3.stream().findFirst().get().getId(), futureBooking.getId());
+
+        Page<Booking> bookings4 = bookingService.findAllBookingByOwner(1L,"WAITING", 1, 1);
+        assertEquals(bookings4.stream().findFirst().get().getId(), waitingBooking.getId());
+
+        Page<Booking> bookings5 = bookingService.findAllBookingByOwner(1L,"REJECTED", 1, 1);
+        assertEquals(bookings5.stream().findFirst().get().getId(), rejectedBooking.getId());
+
+        ValidateBookingException e = assertThrows(ValidateBookingException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                Page<Booking> booki = bookingService.findAllBookingByOwner(1L,"SDFG", 1, 1);
+            }
+        });
+        assertEquals("Unknown state: SDFG", e.getMessage());
+    }
+
+}
