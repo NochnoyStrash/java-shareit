@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemValidateException;
 import ru.practicum.shareit.request.exception.NotFoundRequestException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.exception.UserValidateException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -46,7 +45,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler({UserValidateException.class, ItemValidateException.class})
+    @ExceptionHandler({ItemValidateException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleValidateData(RuntimeException e) {
         log.warn(e.getMessage());

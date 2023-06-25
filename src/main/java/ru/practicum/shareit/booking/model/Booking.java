@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "bookings")
 @Generated
+@lombok.Generated
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

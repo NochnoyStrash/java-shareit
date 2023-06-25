@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoLastAndNextBooking;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.RequestService;
@@ -80,6 +81,15 @@ class ItemServiceImplIntegrationTest {
         ItemDtoLastAndNextBooking item = list.get(0);
         assertEquals(item.getNextBooking().getId(), booking.getId());
         assertEquals(item.getDescription(), itemDto.getDescription());
+    }
+
+    @Test
+    public void updateItemTest() {
+        ItemDto itemDto1 = new ItemDto(1L, "Ворон", "торчвуд", false, itemRequest.getId());
+        Item item3 = itemService.updateItem(itemDto1, user.getId(), itemDto.getId());
+        assertEquals(item3.getName(), itemDto1.getName());
+        assertEquals(item3.getDescription(), itemDto1.getDescription());
+        assertEquals(item3.isAvailable(), itemDto1.getAvailable());
     }
 
 

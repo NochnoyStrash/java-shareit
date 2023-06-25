@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemsRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.exception.NotFoundRequestException;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.request.service.RequestServiceImpl;
@@ -95,6 +96,21 @@ class RequestServiceImplTest {
     }
 
     @Test
+    public void getRequestFromUserTestWithException() {
+        Mockito
+                .when(usersRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        UserNotFoundException e = assertThrows(UserNotFoundException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                List<ItemRequest> itemRequests = requestService.getRequestFromUser(1L);
+            }
+        });
+        assertEquals("Пользователь с ID = 1 отсутствует", e.getMessage());
+    }
+
+    @Test
     public void getAllRequestsTest() {
         Mockito
                 .when(requestRepository.findAll(1L, PageRequest.of(1,1)))
@@ -119,6 +135,24 @@ class RequestServiceImplTest {
                 .findById(1L);
         Mockito.verify(requestRepository, Mockito.times(1))
                 .findById(1L);
+    }
+
+    @Test
+    public void getItemRequestTestWithException() {
+        Mockito
+                .when(usersRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+        Mockito
+                .when(requestRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        NotFoundRequestException e = assertThrows(NotFoundRequestException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                requestService.getItemRequest(1L, 1L);
+            }
+        });
+        assertEquals("Запрос с ID = 1 не найден", e.getMessage());
     }
 
 
