@@ -13,7 +13,6 @@ import ru.practicum.shareit.booking.exception.ValidateBookingException;
 import ru.practicum.shareit.generrat.Generated;
 import ru.practicum.shareit.item.exception.CommentsValidateException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
-import ru.practicum.shareit.item.exception.ItemValidateException;
 import ru.practicum.shareit.request.exception.NotFoundRequestException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
@@ -41,13 +40,6 @@ public class ErrorHandler {
     @ExceptionHandler({ValidateBookingException.class, CommentsValidateException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectUserData(RuntimeException e) {
-        log.warn(e.getMessage());
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler({ItemValidateException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidateData(RuntimeException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }

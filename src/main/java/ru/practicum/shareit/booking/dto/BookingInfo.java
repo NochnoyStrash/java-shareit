@@ -9,7 +9,6 @@ import ru.practicum.shareit.generrat.Generated;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Generated
 public class BookingInfo {
     private Long id;

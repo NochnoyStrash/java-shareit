@@ -9,7 +9,6 @@ import ru.practicum.shareit.generrat.Generated;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Generated
 public class ItemForRequest {
