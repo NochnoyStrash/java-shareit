@@ -16,7 +16,8 @@ import ru.practicum.shareit.user.repository.UsersRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
