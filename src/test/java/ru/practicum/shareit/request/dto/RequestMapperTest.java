@@ -15,7 +15,7 @@ class RequestMapperTest {
     EasyRandom generator = new EasyRandom();
 
     @Test
-    void getItemRequestDto() {
+    void getItemRequestDtoTest() {
         ItemRequest ir = generator.nextObject(ItemRequest.class);
         ItemDto itemDto = generator.nextObject(ItemDto.class);
         ItemRequestDto itemRequestDto = RequestMapper.getItemRequestDto(ir, List.of(itemDto));
@@ -27,7 +27,7 @@ class RequestMapperTest {
     }
 
     @Test
-    void getItemRequest() {
+    void getItemRequestTest() {
         User user = generator.nextObject(User.class);
         ItemRequestDto ir = generator.nextObject(ItemRequestDto.class);
         ir.setCreated(LocalDateTime.now());

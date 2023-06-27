@@ -44,8 +44,7 @@ public class BookingController {
     public List<BookingDtoAuthor> getAll(@RequestHeader(userIdHeaders) long userId, @RequestParam(defaultValue = "ALL") String state,
                                          @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                          @RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
-        Page<Booking> bookings = bookingService.findAllBookingByUser(userId, state, from, size);
-        return bookingService.findAllBookingDtoByUser(bookings.getContent());
+        return bookingService.getAll(userId, state, from, size);
     }
 
     @GetMapping("/owner")

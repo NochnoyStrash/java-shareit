@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.repository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Pageable;
@@ -70,130 +69,130 @@ class BookingRepositoryTest {
 
     }
 
-    @Test
-    void findBookingForAuthor() {
-        Booking bookings3 = bookingRepository.findBookingForAuthor(booking1.getId(), user.getId()).get();
-        assertEquals(bookings3, booking1);
-        final BookingNotFoundException e = assertThrows(BookingNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
+    public void execute() throws Throwable {
                 Booking bookings4 = bookingRepository.findBookingForAuthor(booking1.getId(), user2.getId())
                         .orElseThrow(() -> new BookingNotFoundException("запрос не найден"));
             }
-        });
+
+    @Test
+    public void findBookingForAuthorTest() {
+        Booking bookings3 = bookingRepository.findBookingForAuthor(booking1.getId(), user.getId()).get();
+        assertEquals(bookings3, booking1);
+        final BookingNotFoundException e = assertThrows(BookingNotFoundException.class, this::execute);
         assertEquals("запрос не найден", e.getMessage());
+    }
 
-
+    private void isEquals(List<Booking> bookings, int size) {
+        assertEquals(bookings.size(), size, String.format("размер списка заказов заказчика должен быть равен %d", size));
     }
 
     @Test
-    void findAllByUser() {
+    void findAllByUserTest() {
         List<Booking> bookings = bookingRepository.findAllByUser(user.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 3, "размер списка заказов заказчика должен быть равен 3");
+        isEquals(bookings, 3);
 
         List<Booking> bookings1 = bookingRepository.findAllByUser(user1.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings1, 1);
 
         List<Booking> bookings2 = bookingRepository.findAllByUser(user2.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings2.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings2, 0);
 
     }
 
     @Test
-    void findAllByUserCurrent() {
+    void findAllByUserCurrentTest() {
         List<Booking> bookings = bookingRepository.findAllByUserCurrent(user.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
 
         List<Booking> bookings1 = bookingRepository.findAllByUserCurrent(user2.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
     }
 
     @Test
-    void findAllByUserPost() {
+    void findAllByUserPostTest() {
         List<Booking> bookings = bookingRepository.findAllByUserPost(user.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
-
+        isEquals(bookings, 1);
         List<Booking> bookings1 = bookingRepository.findAllByUserPost(user1.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
 
     }
 
     @Test
-    void findAllByUserFuture() {
+    void findAllByUserFutureTest() {
         List<Booking> bookings = bookingRepository.findAllByUserFuture(user1.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
     }
 
     @Test
-    void findAllByUserWaiting() {
+    void findAllByUserWaitingTest() {
         List<Booking> bookings = bookingRepository.findAllByUserWaiting(user1.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
 
         List<Booking> bookings1 = bookingRepository.findAllByUserWaiting(user.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
 
     }
 
     @Test
-    void findAllByUserRejected() {
+    void findAllByUserRejectedTest() {
         List<Booking> bookings = bookingRepository.findAllByUserRejected(user.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
 
         List<Booking> bookings1 = bookingRepository.findAllByUserRejected(user1.getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
     }
 
     @Test
-    void findAllByOwnerCurrent() {
+    void findAllByOwnerCurrentTest() {
         List<Booking> bookings = bookingRepository.findAllByOwnerCurrent(item2.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
 
         List<Booking> bookings1 = bookingRepository.findAllByOwnerCurrent(item.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
     }
 
     @Test
-    void findAllByOwnerPost() {
+    void findAllByOwnerPostTest() {
         List<Booking> bookings = bookingRepository.findAllByOwnerPost(item2.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
         assertTrue(bookings.get(0).getStart().isBefore(LocalDateTime.now()), "время начала заказа должно быть раньше текущего");
 
         List<Booking> bookings1 = bookingRepository.findAllByOwnerPost(item.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
     }
 
     @Test
-    void testFindAllByOwnerFuture() {
+    void testFindAllByOwnerFutureTest() {
         List<Booking> bookings = bookingRepository.findAllByOwnerFuture(item.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 2, "размер списка заказов заказчика должен быть равен 2");
+        isEquals(bookings, 2);
         assertTrue(bookings.get(0).getStart().isAfter(LocalDateTime.now()), "время начала заказа должно быть позже текущего");
         List<Booking> bookings1 = bookingRepository.findAllByOwnerFuture(item2.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
     }
 
     @Test
-    void findAllByOwnerWaiting() {
+    void findAllByOwnerWaitingTest() {
         List<Booking> bookings = bookingRepository.findAllByOwnerWaiting(item.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
         assertEquals(bookings.get(0).getStatus(), StatusBooking.WAITING, "статусы не равны");
         List<Booking> bookings1 = bookingRepository.findAllByOwnerWaiting(item2.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
     }
 
     @Test
-    void findAllByOwnerRejected() {
+    void findAllByOwnerRejectedTest() {
         List<Booking> bookings = bookingRepository.findAllByOwnerRejected(item.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 1, "размер списка заказов заказчика должен быть равен 1");
+        isEquals(bookings, 1);
         assertEquals(bookings.get(0).getStatus(), StatusBooking.REJECTED, "статусы не равны");
 
         List<Booking> bookings1 = bookingRepository.findAllByOwnerRejected(item2.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings1.size(), 0, "размер списка заказов заказчика должен быть равен 0");
+        isEquals(bookings1, 0);
     }
 
     @Test
-    void findAllByOwner() {
+    void findAllByOwnerTest() {
         List<Booking> bookings = bookingRepository.findAllByOwner(item.getOwner().getId(), Pageable.unpaged()).getContent();
-        assertEquals(bookings.size(), 2, "размер списка заказов заказчика должен быть равен 2");
+        isEquals(bookings, 2);
         assertEquals(bookings.get(0).getItem().getOwner(), bookings.get(1).getItem().getOwner());
     }
 

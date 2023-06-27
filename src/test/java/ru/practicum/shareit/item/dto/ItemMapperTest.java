@@ -11,7 +11,7 @@ class ItemMapperTest {
     EasyRandom generator = new EasyRandom();
 
     @Test
-    void getItemDtoLastNext() {
+    void getItemDtoLastNextTest() {
         Item item = generator.nextObject(Item.class);
         BookingInfo bookingInfoLast = generator.nextObject(BookingInfo.class);
         BookingInfo bookingInfoNext = generator.nextObject(BookingInfo.class);
@@ -24,7 +24,7 @@ class ItemMapperTest {
     }
 
     @Test
-    void getItemForRequest() {
+    void getItemForRequestTest() {
         Item item = generator.nextObject(Item.class);
         ItemForRequest i = ItemMapper.getItemForRequest(item);
         assertEquals(item.getId(), i.getId());
@@ -33,7 +33,7 @@ class ItemMapperTest {
     }
 
     @Test
-    void mapToDto() {
+    void mapToDtoTest() {
         Item item = generator.nextObject(Item.class);
         ItemDto itemDto = ItemMapper.mapToDto(item);
         assertEquals(item.getId(), itemDto.getId());

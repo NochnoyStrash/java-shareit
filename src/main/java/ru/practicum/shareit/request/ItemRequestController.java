@@ -8,8 +8,8 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.RequestService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * TODO Sprint add-item-requests.
@@ -30,19 +30,15 @@ public class ItemRequestController {
 
     @GetMapping
     public List<ItemRequestDto> getRequestsFromUser(@RequestHeader(userIdHeaders) Long userId) {
-        List<ItemRequestDto> itemRequestDtos = new ArrayList<>();
         List<ItemRequest> itemRequests = requestService.getRequestFromUser(userId);
-        itemRequests.forEach(i -> itemRequestDtos.add(requestService.getRequestDto(i)));
-        return itemRequestDtos;
+        return itemRequests.stream().map(requestService::getRequestDto).collect(Collectors.toList());
     }
 
     @GetMapping("/all")
     public List<ItemRequestDto> getAllRequest(@RequestHeader(userIdHeaders) Long userId,
                                               @RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "20") Integer size) {
-        List<ItemRequestDto> itemRequestDtos = new ArrayList<>();
         Page<ItemRequest> allRequests = requestService.getAllRequests(userId, from, size);
-        allRequests.forEach(i -> itemRequestDtos.add(requestService.getRequestDto(i)));
-        return itemRequestDtos;
+        return allRequests.stream().map(requestService::getRequestDto).collect(Collectors.toList());
     }
 
     @GetMapping("/{requestId}")

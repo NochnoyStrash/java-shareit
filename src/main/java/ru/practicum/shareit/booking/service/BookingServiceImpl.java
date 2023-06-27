@@ -101,6 +101,11 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.getBookingDtoAuthor(booking);
     }
 
+    public List<BookingDtoAuthor> getAll(Long userId, String state, Integer from, Integer size) {
+        Page<Booking> bookings = findAllBookingByUser(userId, state, from, size);
+        return findAllBookingDtoByUser(bookings.getContent());
+    }
+
     public Page<Booking> findAllBookingByUser(Long userId, String state, Integer from, Integer size) {
         Page<Booking> bookings;
         int page = from / size;

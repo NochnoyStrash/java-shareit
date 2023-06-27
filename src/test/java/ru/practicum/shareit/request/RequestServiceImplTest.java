@@ -4,7 +4,6 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -59,13 +58,8 @@ class RequestServiceImplTest {
         Mockito
                 .when(usersRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
-        UserNotFoundException e = assertThrows(UserNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                ItemRequest itemRequest1 = requestService.addRequest(itemRequestDto, 1L);
-            }
-        });
-
+        UserNotFoundException e = assertThrows(UserNotFoundException.class, () ->
+                requestService.addRequest(itemRequestDto, 1L));
         assertEquals("Пользователя с ID = 1 не существует", e.getMessage());
 
     }
@@ -102,12 +96,8 @@ class RequestServiceImplTest {
                 .when(usersRepository.findById(1L))
                 .thenReturn(Optional.empty());
 
-        UserNotFoundException e = assertThrows(UserNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                List<ItemRequest> itemRequests = requestService.getRequestFromUser(1L);
-            }
-        });
+        UserNotFoundException e = assertThrows(UserNotFoundException.class, () ->
+                requestService.getRequestFromUser(1L));
         assertEquals("Пользователь с ID = 1 отсутствует", e.getMessage());
     }
 
@@ -147,12 +137,8 @@ class RequestServiceImplTest {
                 .when(requestRepository.findById(1L))
                 .thenReturn(Optional.empty());
 
-        NotFoundRequestException e = assertThrows(NotFoundRequestException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                requestService.getItemRequest(1L, 1L);
-            }
-        });
+        NotFoundRequestException e = assertThrows(NotFoundRequestException.class, () ->
+                requestService.getItemRequest(1L, 1L));
         assertEquals("Запрос с ID = 1 не найден", e.getMessage());
     }
 

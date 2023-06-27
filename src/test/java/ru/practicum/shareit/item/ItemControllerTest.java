@@ -35,6 +35,7 @@ class ItemControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     EasyRandom generator = new EasyRandom();
+    private static final String userIdHeaders = "X-Sharer-User-Id";
 
     @BeforeEach
     public void beforeEach() {
@@ -42,14 +43,14 @@ class ItemControllerTest {
     }
 
     @Test
-    void getItem() throws Exception {
+    void getItemTest() throws Exception {
         ItemDtoLastAndNextBooking idt = generator.nextObject(ItemDtoLastAndNextBooking.class);
         Mockito
                 .when(itemService.getItemLastNext(Mockito.anyLong(), Mockito.anyLong()))
                 .thenReturn(idt);
 
         mvc.perform(get("/items/1")
-                .header("X-Sharer-User-Id", "1")
+                .header(userIdHeaders, "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON))
@@ -59,14 +60,14 @@ class ItemControllerTest {
     }
 
     @Test
-    void addItem() throws Exception {
+    void addItemTest() throws Exception {
         ItemDto itemDto = generator.nextObject(ItemDto.class);
         Mockito
                 .when(itemService.addItem(Mockito.any(ItemDto.class), Mockito.anyLong()))
                 .thenReturn(itemDto);
 
         mvc.perform(post("/items")
-                .header("X-Sharer-User-Id", "1")
+                .header(userIdHeaders, "1")
                 .content(objectMapper.writeValueAsString(itemDto))
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
@@ -77,7 +78,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void patchItem() throws Exception {
+    void patchItemTest() throws Exception {
         ItemDto itemDto = generator.nextObject(ItemDto.class);
         Item item = generator.nextObject(Item.class);
         item.setId(itemDto.getId());
@@ -88,7 +89,7 @@ class ItemControllerTest {
                 .thenReturn(item);
 
         mvc.perform(patch("/items/1")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(userIdHeaders, "1")
                         .content(objectMapper.writeValueAsString(itemDto))
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -100,7 +101,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void getItemMaster() throws Exception {
+    void getItemMasterTest() throws Exception {
         List<ItemDtoLastAndNextBooking> bookings = new ArrayList<>();
         ItemDtoLastAndNextBooking gh = generator.nextObject(ItemDtoLastAndNextBooking.class);
         ItemDtoLastAndNextBooking gg = generator.nextObject(ItemDtoLastAndNextBooking.class);
@@ -112,7 +113,7 @@ class ItemControllerTest {
                 .thenReturn(bookings);
 
         mvc.perform(get("/items")
-                        .header("X-Sharer-User-Id", "1")
+                        .header(userIdHeaders, "1")
                         .param("from", "1")
                         .param("size", "2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -126,7 +127,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void searchItem() throws Exception {
+    void searchItemTest() throws Exception {
         ItemDto itemDto = generator.nextObject(ItemDto.class);
         ItemDto itemDto1 = generator.nextObject(ItemDto.class);
         List<ItemDto> itemDtos = List.of(itemDto, itemDto1);
@@ -146,7 +147,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void addComment() throws Exception {
+    void addCommentTest() throws Exception {
         CommentDto commentDto = generator.nextObject(CommentDto.class);
         Comment comment = generator.nextObject(Comment.class);
         comment.setId(commentDto.getId());
@@ -160,7 +161,7 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/1/comment")
                 .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", "1")
+                        .header(userIdHeaders, "1")
                 .content(objectMapper.writeValueAsString(commentDto))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -171,7 +172,7 @@ class ItemControllerTest {
     }
 
     @Test
-    public void addCommentWithException() throws Exception {
+    public void addCommentWithExceptionTest() throws Exception {
         CommentDto commentDto = generator.nextObject(CommentDto.class);
         Mockito
                 .when(itemService.addComment(Mockito.anyLong(), Mockito.anyLong(), Mockito.any(CommentDto.class)))
@@ -179,7 +180,7 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/1/comment")
                         .characterEncoding(StandardCharsets.UTF_8)
-                        .header("X-Sharer-User-Id", "1")
+                        .header(userIdHeaders, "1")
                         .content(objectMapper.writeValueAsString(commentDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

@@ -50,7 +50,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void createBooking() {
+    void createBookingTest() {
         User user = new User(1L, "Вася", "enot@mail.ru");
         User user1 = new User(2L, "Aся", "dot@mail.ru");
         Item item = new Item(1L, "Дрель", "Мощная дрель", user, true, null);
@@ -95,26 +95,15 @@ class BookingServiceImplTest {
         });
         assertEquals("Неправильная дата заказа", e.getMessage());
 
-        final UserNotFoundException ex = assertThrows(UserNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                Booking booking3 = bookingService.createBooking(bookingDto, user.getId());
-            }
-        });
+        final UserNotFoundException ex = assertThrows(UserNotFoundException.class, () ->
+                bookingService.createBooking(bookingDto, user.getId()));
         assertEquals("Владелец вещи не может быть и заказчиком", ex.getMessage());
-
-
-        final ValidateBookingException exp = assertThrows(ValidateBookingException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                Booking booking4 = bookingService.createBooking(bookingDto1, user1.getId());
-            }
-        });
 
     }
 
+
     @Test
-    void createBookingDto() {
+    void createBookingDtoTest() {
         Booking booking = random.nextObject(Booking.class);
         BookingDto bookingDto = bookingService.createBookingDto(booking);
         assertEquals(bookingDto.getId(), booking.getId());
@@ -125,7 +114,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void createBookingDtoAuthor() {
+    void createBookingDtoAuthorTest() {
         Booking booking = random.nextObject(Booking.class);
         BookingDtoAuthor bookingDtoAuthor = bookingService.createBookingDtoAuthor(booking);
         assertEquals(bookingDtoAuthor.getId(), booking.getId());
@@ -136,7 +125,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void createBookingDtoCreate() {
+    void createBookingDtoCreateTest() {
         Booking booking = random.nextObject(Booking.class);
         BookingDtoCreate bookingDtoCreate = bookingService.createBookingDtoCreate(booking);
         assertEquals(bookingDtoCreate.getId(), booking.getId());
@@ -146,22 +135,21 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void findBooking() {
+    void findBookingTest() {
 
         Mockito
                 .when(bookingRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
-        final BookingNotFoundException e = assertThrows(BookingNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                bookingService.findBooking(1L);
-            }
-        });
+        final BookingNotFoundException e = assertThrows(BookingNotFoundException.class, this::execute7);
         assertEquals("Такого запроса на бронирования с ID = 1 не надено", e.getMessage());
     }
 
+    public void execute7() throws Throwable {
+        bookingService.findBooking(1L);
+    }
+
     @Test
-    void confirmBooking() {
+    void confirmBookingTest() {
         User user = new User(1L, "Вася", "enot@mail.ru");
         User user1 = new User(2L, "Aся", "dot@mail.ru");
         Item item = new Item(1L, "Дрель", "Мощная дрель", user, true, null);
@@ -197,24 +185,22 @@ class BookingServiceImplTest {
         BookingDtoAuthor bookingDtoAuthor1 = bookingService.confirmBooking(1L, 1L, false);
         assertEquals(bookingDtoAuthor1.getStatus(), StatusBooking.REJECTED);
 
-        UserNotFoundException e = assertThrows(UserNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                BookingDtoAuthor bookingDtoAuthor = bookingService.confirmBooking(1L, 2L, true);
-            }
-        });
+        UserNotFoundException e = assertThrows(UserNotFoundException.class, this::execute6);
         assertEquals("Подтверидить заказ может только владелец вещи", e.getMessage());
 
         booking.setStatus(StatusBooking.APPROVED);
-        ValidateBookingException ex = assertThrows(ValidateBookingException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                BookingDtoAuthor bookingDtoAuthor = bookingService.confirmBooking(1L, 1L, true);
-            }
-        });
+        ValidateBookingException ex = assertThrows(ValidateBookingException.class, this::execute5);
         assertEquals("Нелья поменять уже подтвержденной вещи", ex.getMessage());
 
 
+    }
+
+    public void execute5() throws Throwable {
+        BookingDtoAuthor bookingDtoAuthor = bookingService.confirmBooking(1L, 1L, true);
+    }
+
+    public void execute6() throws Throwable {
+        BookingDtoAuthor bookingDtoAuthor = bookingService.confirmBooking(1L, 2L, true);
     }
 
     @Test
@@ -224,12 +210,7 @@ class BookingServiceImplTest {
         Mockito
                 .when(bookingRepository.findBookingForAuthor(1L, 1L))
                 .thenReturn(bookings);
-        ValidateBookingAndItemxception e = assertThrows(ValidateBookingAndItemxception.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                BookingDtoAuthor bookingDto = bookingService.findBookingForAuthor(1L, 1L);
-            }
-        });
+        ValidateBookingAndItemxception e = assertThrows(ValidateBookingAndItemxception.class, this::execute4);
         assertEquals("Не правильный userID = 1 или bookingID = 1", e.getMessage());
 
     }
@@ -247,7 +228,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void findAllBookingByUser() {
+    void findAllBookingByUserTest() {
         Booking allBooking = random.nextObject(Booking.class);
         Booking currentBooking = random.nextObject(Booking.class);
         Booking postBooking = random.nextObject(Booking.class);
@@ -290,17 +271,12 @@ class BookingServiceImplTest {
         Page<Booking> bookings5 = bookingService.findAllBookingByUser(1L,"REJECTED", 1, 1);
         assertEquals(bookings5.stream().findFirst().get().getId(), rejectedBooking.getId());
 
-        ValidateBookingException e = assertThrows(ValidateBookingException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                Page<Booking> booki = bookingService.findAllBookingByUser(1L,"SDFG", 1, 1);
-            }
-        });
+        ValidateBookingException e = assertThrows(ValidateBookingException.class, this::execute3);
         assertEquals("Unknown state: SDFG", e.getMessage());
     }
 
     @Test
-    void findAllBookingByOwner() {
+    void findAllBookingByOwnerTest() {
         Booking allBooking = random.nextObject(Booking.class);
         Booking currentBooking = random.nextObject(Booking.class);
         Booking postBooking = random.nextObject(Booking.class);
@@ -343,30 +319,36 @@ class BookingServiceImplTest {
         Page<Booking> bookings5 = bookingService.findAllBookingByOwner(1L,"REJECTED", 1, 1);
         assertEquals(bookings5.stream().findFirst().get().getId(), rejectedBooking.getId());
 
-        ValidateBookingException e = assertThrows(ValidateBookingException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                Page<Booking> booki = bookingService.findAllBookingByOwner(1L,"SDFG", 1, 1);
-            }
-        });
+        ValidateBookingException e = assertThrows(ValidateBookingException.class, this::execute2);
         assertEquals("Unknown state: SDFG", e.getMessage());
     }
 
     @Test
     public void findAllBookingDtoByUserTest() {
         List<Booking> bookings = new ArrayList<>();
-        BookingNotFoundException e = assertThrows(BookingNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                bookingService.findAllBookingDtoByUser(bookings);
-            }
-        });
-
+        BookingNotFoundException e = assertThrows(BookingNotFoundException.class, this::execute1);
         assertEquals("Заказы не найдены", e.getMessage());
         Booking booking = random.nextObject(Booking.class);
         bookings.add(booking);
         List<BookingDtoAuthor> bookingDtoAuthors = bookingService.findAllBookingDtoByUser(bookings);
         assertEquals(bookingDtoAuthors.get(0).getId(), booking.getId());
+    }
+
+    public void execute1() throws Throwable {
+        List<Booking> bookings = new ArrayList<>();
+        bookingService.findAllBookingDtoByUser(bookings);
+    }
+
+    public void execute2() throws Throwable {
+        Page<Booking> booki = bookingService.findAllBookingByOwner(1L,"SDFG", 1, 1);
+    }
+
+    public void execute3() throws Throwable {
+        Page<Booking> booki = bookingService.findAllBookingByUser(1L,"SDFG", 1, 1);
+    }
+
+    public void execute4() throws Throwable {
+        BookingDtoAuthor bookingDto = bookingService.findBookingForAuthor(1L, 1L);
     }
 
 }

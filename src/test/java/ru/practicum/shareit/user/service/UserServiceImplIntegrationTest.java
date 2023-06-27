@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.user.User;
@@ -27,12 +26,8 @@ class UserServiceImplIntegrationTest {
         assertEquals(user2.getName(), user1.getName());
         assertEquals(user2.getEmail(), user1.getEmail());
 
-        UserNotFoundException e = assertThrows(UserNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                User user3 = userService.updateUser(77, user1);
-            }
-        });
+        UserNotFoundException e = assertThrows(UserNotFoundException.class, () ->
+                userService.updateUser(77, user1));
         assertEquals("Пользователь с ID = 77 отсутствует", e.getMessage());
 
 

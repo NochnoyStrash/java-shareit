@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -97,12 +96,8 @@ public class ItemServiceImplTest {
         itemDto.setDescription("Мощная дрель");
         itemDto.setAvailable(true);
 
-        final ItemNotFoundException e = assertThrows(ItemNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                itemService.updateItem(itemDto, 2, 1);
-            }
-        });
+        final ItemNotFoundException e = assertThrows(ItemNotFoundException.class, () ->
+                itemService.updateItem(itemDto, 2, 1));
         assertEquals("У пользователя с ID = 2  нет вещей с ID = 1", e.getMessage());
 
     }
@@ -116,12 +111,8 @@ public class ItemServiceImplTest {
         Mockito
                 .when(mockItemsRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
-        final ItemNotFoundException e = assertThrows(ItemNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                itemService.updateItem(itemDto, 1, 1);
-            }
-        });
+        final ItemNotFoundException e = assertThrows(ItemNotFoundException.class,
+                () -> itemService.updateItem(itemDto, 1, 1));
         assertEquals("Не найдена вещь с таким ID = 1", e.getMessage());
     }
 
@@ -199,12 +190,8 @@ public class ItemServiceImplTest {
                 .when(mockCommentRepository.save(Mockito.any(Comment.class)))
                 .thenReturn(new Comment());
 
-        CommentsValidateException e = assertThrows(CommentsValidateException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                itemService.addComment(1L, 1L, commentDto);
-            }
-        });
+        CommentsValidateException e = assertThrows(CommentsValidateException.class, () ->
+                itemService.addComment(1L, 1L, commentDto));
         assertEquals("Комментарии могут оставлять только пользователи вещи с заверщенным заказом", e.getMessage());
 
         Booking booking = generator.nextObject(Booking.class);

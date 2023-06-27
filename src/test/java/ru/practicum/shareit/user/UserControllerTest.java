@@ -44,7 +44,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getAllUser() throws Exception {
+    void getAllUserTest() throws Exception {
         List<User> users = List.of(user1, user);
         Mockito
                 .when(userService.getAllUsers())
@@ -59,7 +59,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUser() throws Exception {
+    void addUserTest() throws Exception {
         Mockito
                 .when(userService.addUser(Mockito.any(User.class)))
                 .thenReturn(user);
@@ -74,7 +74,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUser() throws Exception {
+    void getUserTest() throws Exception {
         Mockito
                 .when(userService.getUser(Mockito.anyLong()))
                 .thenReturn(user);
@@ -90,7 +90,7 @@ class UserControllerTest {
     }
 
     @Test
-    void patchUser() throws Exception {
+    void patchUserTest() throws Exception {
         Mockito
                 .when(userService.updateUser(Mockito.anyLong(), Mockito.any(User.class)))
                 .thenReturn(user1);
@@ -104,21 +104,8 @@ class UserControllerTest {
 
     }
 
-//    @Test
-//    void deleteUser() throws Exception {
-//        mvc.perform(patch("/users/1")
-//                .content(objectMapper.writeValueAsString(1))
-//                .characterEncoding(StandardCharsets.UTF_8)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON));
-//        Mockito
-//                .verify(userService, Mockito.times(1))
-//                .deleteUser(1);
-//
-//    }
-
     @Test
-    void getUserWithException() throws Exception {
+    void getUserWithExceptionTest() throws Exception {
         Mockito
                 .when(userService.getUser(Mockito.anyLong()))
                 .thenThrow(UserNotFoundException.class);

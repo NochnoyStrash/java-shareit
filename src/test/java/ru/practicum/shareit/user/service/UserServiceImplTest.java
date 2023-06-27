@@ -4,7 +4,6 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,7 +13,8 @@ import ru.practicum.shareit.user.repository.UsersRepository;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -32,21 +32,17 @@ class UserServiceImplTest {
 
 
     @Test
-    void getUser() {
+    void getUserTest() {
         Mockito
                 .when(usersRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
-        UserNotFoundException e = assertThrows(UserNotFoundException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                userService.getUser(1L);
-            }
-        });
+        UserNotFoundException e = assertThrows(UserNotFoundException.class, () ->
+                userService.getUser(1L));
         assertEquals("Пользователь с ID = 1 отсутствует", e.getMessage());
     }
 
     @Test
-    void updateUser() {
+    void updateUserTest() {
         User user1 = generator.nextObject(User.class);
         Mockito
                 .when(usersRepository.findById(Mockito.anyLong()))
@@ -65,7 +61,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void deleteUser() {
+    public void deleteUserTest() {
         userService.deleteUser(1);
         Mockito.verify(usersRepository, Mockito.times(1))
                 .deleteById(Mockito.anyLong());
@@ -73,7 +69,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getAllUsers() {
+    void getAllUsersTest() {
         userService.getAllUsers();
         Mockito
                 .verify(usersRepository, Mockito.times(1))
