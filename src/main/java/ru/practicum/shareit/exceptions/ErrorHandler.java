@@ -10,20 +10,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.booking.exception.ValidateBookingAndItemxception;
 import ru.practicum.shareit.booking.exception.ValidateBookingException;
+import ru.practicum.shareit.generrat.Generated;
 import ru.practicum.shareit.item.exception.CommentsValidateException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
-import ru.practicum.shareit.item.exception.ItemValidateException;
+import ru.practicum.shareit.request.exception.NotFoundRequestException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.exception.UserValidateException;
 
 import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 @Slf4j
+@Generated
 public class ErrorHandler {
 
     @ExceptionHandler({ UserNotFoundException.class, ItemNotFoundException.class,
-            BookingNotFoundException.class, ValidateBookingAndItemxception.class })
+            BookingNotFoundException.class, ValidateBookingAndItemxception.class, NotFoundRequestException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectNotFound(RuntimeException e) {
         return  new ErrorResponse(e.getMessage());
@@ -39,13 +40,6 @@ public class ErrorHandler {
     @ExceptionHandler({ValidateBookingException.class, CommentsValidateException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectUserData(RuntimeException e) {
-        log.warn(e.getMessage());
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler({UserValidateException.class, ItemValidateException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidateData(RuntimeException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }

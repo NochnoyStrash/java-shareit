@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.StatusBooking;
@@ -20,7 +22,6 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -100,52 +101,68 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.getBookingDtoAuthor(booking);
     }
 
-    public List<Booking> findAllBookingByUser(Long userId, String state) {
-        List<Booking> bookings = new ArrayList<>();
+    public List<BookingDtoAuthor> getAll(Long userId, String state, Integer from, Integer size) {
+        Page<Booking> bookings = findAllBookingByUser(userId, state, from, size);
+        return findAllBookingDtoByUser(bookings.getContent());
+    }
+
+    public Page<Booking> findAllBookingByUser(Long userId, String state, Integer from, Integer size) {
+        Page<Booking> bookings;
+        int page = from / size;
+        int pageLast = from % size;
+        if (pageLast > 0) {
+            page++;
+        }
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findAllByUser(userId);
+                bookings = bookingRepository.findAllByUser(userId, PageRequest.of(page, size));
                 return bookings;
             case "CURRENT":
-                bookings = bookingRepository.findAllByUserCurrent(userId);
+                bookings = bookingRepository.findAllByUserCurrent(userId, PageRequest.of(page, size));
                 return bookings;
             case "PAST":
-                bookings = bookingRepository.findAllByUserPost(userId);
+                bookings = bookingRepository.findAllByUserPost(userId, PageRequest.of(page, size));
                 return bookings;
             case "FUTURE":
-                bookings = bookingRepository.findAllByUserFuture(userId);
+                bookings = bookingRepository.findAllByUserFuture(userId, PageRequest.of(page, size));
                 return bookings;
             case "WAITING":
-                bookings = bookingRepository.findAllByUserWaiting(userId);
+                bookings = bookingRepository.findAllByUserWaiting(userId, PageRequest.of(page, size));
                 return bookings;
             case "REJECTED":
-                bookings = bookingRepository.findAllByUserRejected(userId);
+                bookings = bookingRepository.findAllByUserRejected(userId, PageRequest.of(page, size));
                 return bookings;
             default:
                 throw new ValidateBookingException(String.format("Unknown state: %S", state));
         }
     }
 
-    public List<Booking> findAllBookingByOwner(Long userId, String state) {
-        List<Booking> bookings = new ArrayList<>();
+    public Page<Booking> findAllBookingByOwner(Long userId, String state, Integer from, Integer size) {
+        Page<Booking> bookings;
+        int page = from / size;
+        int pageLast = from % size;
+        if (pageLast > 0) {
+            page++;
+        }
+
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findAllByOwner(userId);
+                bookings = bookingRepository.findAllByOwner(userId, PageRequest.of(page, size));
                 return bookings;
             case "CURRENT":
-                bookings = bookingRepository.findAllByOwnerCurrent(userId);
+                bookings = bookingRepository.findAllByOwnerCurrent(userId, PageRequest.of(page, size));
                 return bookings;
             case "PAST":
-                bookings = bookingRepository.findAllByOwnerPost(userId);
+                bookings = bookingRepository.findAllByOwnerPost(userId, PageRequest.of(page, size));
                 return bookings;
             case "FUTURE":
-                bookings = bookingRepository.findAllByOwnerFuture(userId);
+                bookings = bookingRepository.findAllByOwnerFuture(userId, PageRequest.of(page, size));
                 return bookings;
             case "WAITING":
-                bookings = bookingRepository.findAllByOwnerWaiting(userId);
+                bookings = bookingRepository.findAllByOwnerWaiting(userId, PageRequest.of(page, size));
                 return bookings;
             case "REJECTED":
-                bookings = bookingRepository.findAllByOwnerRejected(userId);
+                bookings = bookingRepository.findAllByOwnerRejected(userId, PageRequest.of(page, size));
                 return bookings;
             default:
                 throw new ValidateBookingException(String.format("Unknown state: %S", state));

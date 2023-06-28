@@ -1,8 +1,7 @@
 package ru.practicum.shareit.user;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import ru.practicum.shareit.generrat.Generated;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -12,10 +11,11 @@ import javax.validation.constraints.NotNull;
  * TODO Sprint add-controllers.
  */
 @Entity
-@Getter
-@Setter
-@ToString
+@Data
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
+@Generated
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +28,4 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        return id != null && id.equals(((User) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

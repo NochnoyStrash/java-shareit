@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingInfo;
+import ru.practicum.shareit.generrat.Generated;
 import ru.practicum.shareit.item.comments.CommentDto;
 
 import javax.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Generated
 public class ItemDtoLastAndNextBooking {
     private long id;
     @NotNull

@@ -20,6 +20,27 @@ public class ItemMapper {
                 .build();
     }
 
+    public static ItemForRequest getItemForRequest(Item item) {
+        return ItemForRequest.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .ownerId(item.getOwner().getId())
+                .build();
+    }
+
+    public static ItemDto mapToDto(Item item) {
+        ItemDto itemDto = ItemDto.builder()
+                .id(item.getId())
+                .description(item.getDescription())
+                .name(item.getName())
+                .available(item.isAvailable())
+                .build();
+        if (item.getRequest() != null) {
+            itemDto.setRequestId(item.getRequest().getId());
+        }
+        return itemDto;
+    }
+
 
 
 }

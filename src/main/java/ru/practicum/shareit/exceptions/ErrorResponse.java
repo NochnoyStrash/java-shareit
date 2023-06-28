@@ -1,5 +1,8 @@
 package ru.practicum.shareit.exceptions;
 
+import ru.practicum.shareit.generrat.Generated;
+
+@Generated
 public class ErrorResponse {
     private final String error;
 
