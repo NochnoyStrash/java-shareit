@@ -13,16 +13,9 @@ import javax.validation.ConstraintViolationException;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class })
+    @ExceptionHandler({ValidateUserExcepion.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectUserData(ConstraintViolationException e) {
-        log.warn(e.getMessage());
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler({ValidateUserExcepion.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectUserData(RuntimeException e) {
+    public ErrorResponse handleIncorrectUserData(Exception e) {
         log.warn(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }

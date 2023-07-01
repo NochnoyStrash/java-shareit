@@ -67,7 +67,7 @@ class RequestRepositoryTest {
     public void findAllTest() {
         List<ItemRequest> itemRequests2 = requestRepository.findAll(user1.getId(), Pageable.unpaged()).getContent();
 
-        assertEquals(itemRequests2.size(), 2, "количество элементов в списке не равно 2");
+        assertEquals(itemRequests2.size(), 3, "количество элементов в списке не равно 3");
         assertNotEquals(itemRequests2.get(0).getId(), itemRequest.getId(), "запросы равны");
         assertNotEquals(itemRequests2.get(1).getId(), itemRequest1.getId(), "запросы равны");
 

@@ -21,13 +21,13 @@ import javax.validation.constraints.PositiveOrZero;
 public class BookingController {
 	private final BookingClient bookingClient;
 
-	private static final String userIdHeaders = "X-Sharer-User-Id";
+	private static final String USER_ID_HEADERS = "X-Sharer-User-Id";
 
 	@GetMapping
-	public ResponseEntity<Object> getBookings(@RequestHeader(userIdHeaders) long userId,
+	public ResponseEntity<Object> getBookings(@RequestHeader(USER_ID_HEADERS) long userId,
 			@RequestParam(name = "state", defaultValue = "all") String stateParam,
-			@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-			@Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+			@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+			@Positive @RequestParam(defaultValue = "10") Integer size) {
 		BookingState state = BookingState.from(stateParam)
 				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
 		log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
@@ -35,28 +35,28 @@ public class BookingController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> bookItem(@RequestHeader(userIdHeaders) long userId,
+	public ResponseEntity<Object> bookItem(@RequestHeader(USER_ID_HEADERS) long userId,
 			@RequestBody @Valid BookItemRequestDto requestDto) {
 		log.info("Creating booking {}, userId={}", requestDto, userId);
 		return bookingClient.bookItem(userId, requestDto);
 	}
 
 	@GetMapping("/{bookingId}")
-	public ResponseEntity<Object> getBooking(@RequestHeader(userIdHeaders) long userId,
+	public ResponseEntity<Object> getBooking(@RequestHeader(USER_ID_HEADERS) long userId,
 			@PathVariable Long bookingId) {
 		log.info("Get booking {}, userId={}", bookingId, userId);
 		return bookingClient.getBooking(userId, bookingId);
 	}
 
 	@PatchMapping("/{bookingId}")
-	public ResponseEntity<Object> confirmBooking(@RequestHeader(userIdHeaders) long userId,
+	public ResponseEntity<Object> confirmBooking(@RequestHeader(USER_ID_HEADERS) long userId,
 												 @PathVariable Long bookingId,
 												 @RequestParam boolean approved) {
 		return bookingClient.confirmBooking(userId, bookingId, approved);
 	}
 
 	@GetMapping("/owner")
-	public ResponseEntity<Object> getAllByOwner(@RequestHeader(userIdHeaders) long userId, @RequestParam(defaultValue = "ALL") String state,
+	public ResponseEntity<Object> getAllByOwner(@RequestHeader(USER_ID_HEADERS) long userId, @RequestParam(defaultValue = "ALL") String state,
 												@RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
 												@RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
 		BookingState state1 = BookingState.from(state)

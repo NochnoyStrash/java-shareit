@@ -36,7 +36,7 @@ class ItemRequestControllerTest {
     ItemRequest itemRequest;
     ItemRequestDto itemRequestDto;
 
-    private static final String userIdHeaders = "X-Sharer-User-Id";
+    private static final String USER_ID_HEADERS = "X-Sharer-User-Id";
 
     @BeforeEach
     public void beforeEach() {
@@ -67,7 +67,7 @@ class ItemRequestControllerTest {
     @Test
     void addRequest() throws Exception {
         mvc.perform(post("/requests")
-                .header(userIdHeaders, "1")
+                .header(USER_ID_HEADERS, "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
@@ -79,7 +79,7 @@ class ItemRequestControllerTest {
     @Test
     void getRequestsFromUser() throws Exception {
         mvc.perform(get("/requests")
-                .header(userIdHeaders, "1")
+                .header(USER_ID_HEADERS, "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8))
@@ -91,7 +91,7 @@ class ItemRequestControllerTest {
     @Test
     void getAllRequestTest() throws Exception {
         mvc.perform(get("/requests/all")
-                .header(userIdHeaders, "1")
+                .header(USER_ID_HEADERS, "1")
                 .param("from", "1")
                 .param("size", "1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +104,7 @@ class ItemRequestControllerTest {
     @Test
     void getRequestTest() throws Exception {
         mvc.perform(get("/requests/1")
-                .header(userIdHeaders, "1")
+                .header(USER_ID_HEADERS, "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))

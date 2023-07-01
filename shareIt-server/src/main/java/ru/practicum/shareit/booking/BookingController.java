@@ -22,36 +22,36 @@ import java.util.List;
 @Validated
 public class BookingController {
     private final BookingServiceImpl bookingService;
-    private static final String userIdHeaders = "X-Sharer-User-Id";
+    private static final String USER_ID_HEADERS = "X-Sharer-User-Id";
 
     @PostMapping
-    public BookingDtoAuthor createBooking(@RequestHeader(userIdHeaders) long userId,
+    public BookingDtoAuthor createBooking(@RequestHeader(USER_ID_HEADERS) long userId,
                                           @RequestBody @Valid BookingDtoCreate bookingDto) {
         Booking booking = bookingService.createBooking(bookingDto, userId);
     return bookingService.createBookingDtoAuthor(booking);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDtoAuthor confirmBooking(@RequestHeader(userIdHeaders) long userId,
+    public BookingDtoAuthor confirmBooking(@RequestHeader(USER_ID_HEADERS) long userId,
                                            @PathVariable Long bookingId,
                                            @RequestParam boolean approved) {
         return bookingService.confirmBooking(bookingId, userId, approved);
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDtoAuthor getBookingAuthor(@RequestHeader(userIdHeaders) long userId, @PathVariable Long bookingId) {
+    public BookingDtoAuthor getBookingAuthor(@RequestHeader(USER_ID_HEADERS) long userId, @PathVariable Long bookingId) {
         return bookingService.findBookingForAuthor(bookingId, userId);
     }
 
     @GetMapping
-    public List<BookingDtoAuthor> getAll(@RequestHeader(userIdHeaders) long userId, @RequestParam(defaultValue = "ALL") String state,
+    public List<BookingDtoAuthor> getAll(@RequestHeader(USER_ID_HEADERS) long userId, @RequestParam(defaultValue = "ALL") String state,
                                          @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                          @RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
         return bookingService.getAll(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoAuthor> getAllByOwner(@RequestHeader(userIdHeaders) long userId, @RequestParam(defaultValue = "ALL") String state,
+    public List<BookingDtoAuthor> getAllByOwner(@RequestHeader(USER_ID_HEADERS) long userId, @RequestParam(defaultValue = "ALL") String state,
                                                 @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                                 @RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
         Page<Booking> bookings = bookingService.findAllBookingByOwner(userId, state, from, size);

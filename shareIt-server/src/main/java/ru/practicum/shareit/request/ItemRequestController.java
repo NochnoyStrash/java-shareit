@@ -19,22 +19,22 @@ import java.util.stream.Collectors;
 public class ItemRequestController {
     private final RequestService requestService;
 
-    private static final String userIdHeaders = "X-Sharer-User-Id";
+    private static final String USER_ID_HEADERS = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemRequestDto addRequest(@RequestHeader(userIdHeaders) Long userId, @RequestBody ItemRequestDto request) {
+    public ItemRequestDto addRequest(@RequestHeader(USER_ID_HEADERS) Long userId, @RequestBody ItemRequestDto request) {
         ItemRequest itemRequest = requestService.addRequest(request, userId);
         return requestService.getRequestDto(itemRequest);
     }
 
     @GetMapping
-    public List<ItemRequestDto> getRequestsFromUser(@RequestHeader(userIdHeaders) Long userId) {
+    public List<ItemRequestDto> getRequestsFromUser(@RequestHeader(USER_ID_HEADERS) Long userId) {
         List<ItemRequest> itemRequests = requestService.getRequestFromUser(userId);
         return itemRequests.stream().map(requestService::getRequestDto).collect(Collectors.toList());
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAllRequest(@RequestHeader(userIdHeaders) Long userId,
+    public List<ItemRequestDto> getAllRequest(@RequestHeader(USER_ID_HEADERS) Long userId,
                                               @RequestParam(defaultValue = "0") Integer from,
                                               @RequestParam(defaultValue = "20") Integer size) {
         Page<ItemRequest> allRequests = requestService.getAllRequests(userId, from, size);
@@ -42,7 +42,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestDto getRequest(@RequestHeader(userIdHeaders) Long userId, @PathVariable Long requestId) {
+    public ItemRequestDto getRequest(@RequestHeader(USER_ID_HEADERS) Long userId, @PathVariable Long requestId) {
         ItemRequest itemRequest = requestService.getItemRequest(requestId, userId);
         return requestService.getRequestDto(itemRequest);
     }

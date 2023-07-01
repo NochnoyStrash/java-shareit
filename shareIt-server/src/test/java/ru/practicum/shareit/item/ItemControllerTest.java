@@ -35,7 +35,7 @@ class ItemControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     EasyRandom generator = new EasyRandom();
-    private static final String userIdHeaders = "X-Sharer-User-Id";
+    private static final String USER_ID_HEADERS = "X-Sharer-User-Id";
 
     @BeforeEach
     public void beforeEach() {
@@ -50,7 +50,7 @@ class ItemControllerTest {
                 .thenReturn(idt);
 
         mvc.perform(get("/items/1")
-                .header(userIdHeaders, "1")
+                .header(USER_ID_HEADERS, "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON))
@@ -67,7 +67,7 @@ class ItemControllerTest {
                 .thenReturn(itemDto);
 
         mvc.perform(post("/items")
-                .header(userIdHeaders, "1")
+                .header(USER_ID_HEADERS, "1")
                 .content(objectMapper.writeValueAsString(itemDto))
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
@@ -89,7 +89,7 @@ class ItemControllerTest {
                 .thenReturn(item);
 
         mvc.perform(patch("/items/1")
-                        .header(userIdHeaders, "1")
+                        .header(USER_ID_HEADERS, "1")
                         .content(objectMapper.writeValueAsString(itemDto))
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -113,7 +113,7 @@ class ItemControllerTest {
                 .thenReturn(bookings);
 
         mvc.perform(get("/items")
-                        .header(userIdHeaders, "1")
+                        .header(USER_ID_HEADERS, "1")
                         .param("from", "1")
                         .param("size", "2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ class ItemControllerTest {
                 .thenReturn(itemDtos);
 
         mvc.perform(get("/items/search")
-                        .header(userIdHeaders, "1")
+                        .header(USER_ID_HEADERS, "1")
                 .param("text", "отверт")
                 .param("from", "1")
                 .param("size", "2")
@@ -162,7 +162,7 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/1/comment")
                 .characterEncoding(StandardCharsets.UTF_8)
-                        .header(userIdHeaders, "1")
+                        .header(USER_ID_HEADERS, "1")
                 .content(objectMapper.writeValueAsString(commentDto))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -181,7 +181,7 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/1/comment")
                         .characterEncoding(StandardCharsets.UTF_8)
-                        .header(userIdHeaders, "1")
+                        .header(USER_ID_HEADERS, "1")
                         .content(objectMapper.writeValueAsString(commentDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

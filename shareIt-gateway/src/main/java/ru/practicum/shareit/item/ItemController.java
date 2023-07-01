@@ -22,21 +22,21 @@ import javax.validation.constraints.PositiveOrZero;
 @Validated
 public class ItemController {
     private final ItemClient itemClient;
-    private static final String userIdHeaders = "X-Sharer-User-Id";
+    private static final String USER_ID_HEADERS = "X-Sharer-User-Id";
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItem(@RequestHeader(userIdHeaders) @NotNull Long userId, @PathVariable @NotNull Long itemId) {
+    public ResponseEntity<Object> getItem(@RequestHeader(USER_ID_HEADERS) @NotNull Long userId, @PathVariable @NotNull Long itemId) {
         return itemClient.getItem(userId, itemId);
     }
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestHeader(userIdHeaders) Long userId,
+    public ResponseEntity<Object> addItem(@RequestHeader(USER_ID_HEADERS) Long userId,
                                           @RequestBody @Validated(value = Creating.class) ItemDto itemDto) {
         return itemClient.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> patchItem(@RequestHeader(userIdHeaders) @NotNull Long userId,
+    public ResponseEntity<Object> patchItem(@RequestHeader(USER_ID_HEADERS) @NotNull Long userId,
                                             @RequestBody  ItemDto itemDto,
                                             @PathVariable @NotNull Long itemId) {
         Validation.item(itemDto);
@@ -44,14 +44,14 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getItemMaster(@RequestHeader(userIdHeaders) @NotNull Long userId,
+    public ResponseEntity<Object> getItemMaster(@RequestHeader(USER_ID_HEADERS) @NotNull Long userId,
                                                 @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                                 @RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
         return itemClient.getItemMaster(userId, from, size);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItem(@RequestHeader(userIdHeaders) Long userId,
+    public ResponseEntity<Object> searchItem(@RequestHeader(USER_ID_HEADERS) Long userId,
                                              @RequestParam String text,
                                              @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                              @RequestParam(defaultValue = "20") @PositiveOrZero Integer size) {
@@ -59,7 +59,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> addComment(@RequestHeader(userIdHeaders) @NotNull Long userId,
+    public ResponseEntity<Object> addComment(@RequestHeader(USER_ID_HEADERS) @NotNull Long userId,
                                              @PathVariable @NotNull Long itemId, @RequestBody @Valid CommentDto commentDto) {
         return itemClient.addComment(userId, itemId, commentDto);
 
